@@ -1,2 +1,6 @@
-.venv
 templates/tmp.html
+flask_setup.txt
+flask_session
+
+.venv
+__pycache__
