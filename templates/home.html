@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+
+    <!-- Popular Recipes Section -->
+    <section>
+        <h2>Popular Recipes</h2>
+        <div class="row">
+            <!-- Popular recipe cards -->
+            {% for recipe in recipes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card text-bg-dark">
+                        <!-- Recipe image -->
+                        <img src="{{ recipe.image }}" class="card-img" alt="...">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title">{{ recipe.name }}</h5>
+                            <p class="card-text">{{ recipe.description }}</p>
+                            <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                        </div>
+                        </div>
+                </div>
+            {% endfor %}
+            <!-- Repeat similar cards for other popular recipes -->
+
+
+            <!-- Show More card for Popular Recipes -->
+            <div class="col-md-4 mb-4">
+                <div class="card text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">Show More</h5>
+                        <p class="card-text">View all popular recipes</p>
+                        <a href="/popular-recipes" class="btn btn-primary">Show More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommended Recipes Section -->
+    <section>
+        <h2>Recommended Recipes</h2>
+        <div class="row">
+            <!-- Recommended recipe cards -->
+            {% for recipe in recipes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card text-bg-dark">
+                        <!-- Recipe image -->
+                        <img src="{{ recipe.image }}" class="card-img" alt="...">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title">{{ recipe.name }}</h5>
+                            <p class="card-text">{{ recipe.description }}</p>
+                            <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                        </div>
+                        </div>
+                </div>
+            {% endfor %}
+            <!-- Repeat similar cards for other recommended recipes -->
+
+            <!-- Show More card for Recommended Recipes -->
+            <div class="col-md-4 mb-4">
+                <div class="card text-dark">
+                    <div class="card-body">
+                        <h5 class="card-title">Show More</h5>
+                        <p class="card-text">View all recommended recipes</p>
+                        <a href="/recommended-recipes" class="btn btn-primary">Show More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
