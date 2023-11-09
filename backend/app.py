@@ -1,11 +1,21 @@
 import datetime
+from functools import wraps
 
 from database.models import (Category, Instruction, Recipe, User, db,
                              db_drop_and_create_all, setup_db)
-from flask import (Flask, flash, jsonify, redirect, render_template, request,
-                   session)
+from flask import (Flask, flash, g, jsonify, redirect, render_template,
+                   request, session, url_for)
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def create_app(db_URI="", test_config=None):
@@ -54,9 +64,70 @@ def create_app(db_URI="", test_config=None):
     Session(app)
 
 
+    @app.after_request
+    def after_request(response):
+        """Ensure responses aren't cached"""
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Expires"] = 0
+        response.headers["Pragma"] = "no-cache"
+        return response
+
+
     @app.route('/health')
     def health():
         return "Up and Running!"
+
+    
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        """Log user in"""
+
+        # Forget any user_id
+        session.clear()
+
+        # User reached route via POST (as by submitting a form via POST)
+        if request.method == "POST":
+            username = request.form.get("username")
+            password = request.form.get("password")
+
+            # Ensure username was submitted
+            if not username:
+                flash(f"Enter email", "warning")
+                return render_template("login.html")
+
+            # Ensure password was submitted
+            elif not password:
+                flash(f"Enter password", "warning")
+                return render_template("login.html")
+
+            # Query database for username
+            user = User.query.filter_by(username=username).first()
+
+            # Ensure username exists and password is correct
+            print(check_password_hash(password, user.password_hash))
+            if user is None or not check_password_hash(user.password_hash, password):
+                flash(f"Invalid username and/or password", "error")
+                return render_template("login.html")
+
+            # Remember which user has logged in
+            session["user_id"] = user.id
+
+            # Redirect user to home page
+            flash(f"Welcome {user.first_name}!", "info")
+            return redirect("/")
+
+        # User reached route via GET (as by clicking a link or via redirect)
+        else:
+            return render_template("login.html")
+
+    
+    @app.route("/logout")
+    def logout():
+        # Forget any user_id
+        session.clear()
+
+        # Redirect user to login form
+        return redirect("/")
 
     
     @app.route("/")
