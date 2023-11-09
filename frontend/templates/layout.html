@@ -55,25 +55,10 @@
 
         <!-- Page Content -->
         
-        <div class="container mt-4">
-            <h1>Welcome to the Recipe Sharing App</h1>
-
+        <div class="container mt-4 mb-4">
             <!-- Sweet Alerts -->
             {% include "sweetalerts.html" %}
             
-            <!-- Flash Messages -->
-            <!-- {% with messages = get_flashed_messages() %} 
-                {% if messages %}
-                    <ul class="flashes list-group">
-                        {% for message in messages %}
-                            <li class="list-group-item">
-                                <div class="alert alert-success">{{ message }}</div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %} 
-            {% endwith %} -->
-
             <!-- Main Content -->
             {% block main %}{% endblock %}
         </div>

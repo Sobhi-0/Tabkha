@@ -5,13 +5,20 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/login" method="post">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username"  name="username" placeholder="Username" type="text">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <form action="/login" method="post" class="login-form">
+                    <h2 class="text-center mb-4">Login</h2>
+                    <div class="mb-3">
+                        <input autocomplete="off" autofocus class="form-control" id="username"  name="username" placeholder="Username" type="text">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" id="password"  name="password" placeholder="Password" type="password">
+                    </div>
+                    <button class="btn btn-primary mx-auto d-block" type="submit">Log In</button>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" id="password"  name="password" placeholder="Password" type="password">
-        </div>
-        <button class="btn btn-primary" type="submit">Log In</button>
-    </form>
+    </div>
 {% endblock %}
