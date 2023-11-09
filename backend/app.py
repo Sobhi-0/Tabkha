@@ -1,21 +1,12 @@
 import datetime
-from functools import wraps
 
 from database.models import (Category, Instruction, Recipe, User, db,
                              db_drop_and_create_all, setup_db)
 from flask import (Flask, flash, g, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_session import Session
+from helpers import login_required, valid_email, valid_password
 from werkzeug.security import check_password_hash, generate_password_hash
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if g.user is None:
-            return redirect(url_for('login', next=request.url))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 def create_app(db_URI="", test_config=None):
@@ -80,8 +71,6 @@ def create_app(db_URI="", test_config=None):
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
-        """Log user in"""
-
         # Forget any user_id
         session.clear()
 
@@ -113,12 +102,49 @@ def create_app(db_URI="", test_config=None):
             session["user_id"] = user.id
 
             # Redirect user to home page
-            flash(f"Welcome {user.first_name}!", "info")
+            flash(f"Welcome back, {user.first_name}!", "info")
             return redirect("/")
 
         # User reached route via GET (as by clicking a link or via redirect)
         else:
             return render_template("login.html")
+
+    
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
+        if request.method == "POST":
+            firstname = request.form.get("firstname")
+            lastname = request.form.get("lastname")
+            username = request.form.get("username")
+            email = request.form.get("email")
+            password1 = request.form.get("password1")
+            password2 = request.form.get("password2")
+
+            # Ensure all fields were submitted
+            if  not firstname or not lastname or not email or not username or not password1 or not password2:
+                flash(f"Must fill all fields", "warning")
+                return render_template("register.html")
+
+            if password1 != password2:
+                flash("Passwords do not match", "error")
+                return render_template("register.html")
+
+            if not valid_email(email):
+                flash("Email not valid", "error")
+                return render_template("register.html")
+
+            if not valid_password(password1):
+                flash("Password does not meet constraints", "error")
+                return render_template("register.html")
+
+            new_user = User(first_name=firstname, last_name=lastname, username=username, email=email, password_hash=generate_password_hash(password1), created_at=datetime.datetime.now())
+            new_user.insert()
+
+            flash("Account created successfully", "success")
+            return redirect("/login")
+
+        else:
+            return render_template("register.html")
 
     
     @app.route("/logout")
