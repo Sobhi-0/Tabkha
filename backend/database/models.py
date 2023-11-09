@@ -89,6 +89,7 @@ class Recipe(BaseModel):
     cook_time = db.Column(db.Integer, nullable=False)
     image = db.Column(db.LargeBinary)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
@@ -109,3 +110,6 @@ class Category(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String, nullable=False, unique=True)
+
+    # one-to-many relations
+    recipes = db.relationship('Recipe', backref='category', lazy=True)
