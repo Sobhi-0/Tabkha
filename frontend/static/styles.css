@@ -3,4 +3,30 @@
     width: 100%;
     height: 15vw;
     filter: brightness(50%);
-} 
+}
+
+.img-fluid {
+    object-fit: cover;
+    width: 100%;
+    height: 15vw;
+}
+
+.list-group-item {
+    transition: background-color 0.3s;  /* Add a smooth transition effect */
+}
+
+/* Style for the list item when hovered */
+.list-group-item:hover {
+    background-color: #ababab;  /* Add the background color you want on hover */
+}
+
+/* Style for the delete button */
+.delete-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}

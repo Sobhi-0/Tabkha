@@ -5,7 +5,7 @@ from database.models import (Category, Instruction, Recipe, User, db,
 from flask import (Flask, flash, g, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_session import Session
-from helpers import login_required, valid_email, valid_password
+from helpers import login_required, paginate_items, valid_email, valid_password
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -28,12 +28,12 @@ def create_app(db_URI="", test_config=None):
     # user2 = User(first_name="Jane", last_name="Smith", email="jane@example.com", password_hash="hashed_password2", created_at=datetime.datetime.now())
 
     # Create recipes and add them to the session
-    # recipe1 = Recipe(title="Recipe 1", description="Description 1", prepare_time=30, cook_time=60, user_id=1, created_at=datetime.datetime.now())
+    # recipe1 = Recipe(title="Recipe-289", description="Description4 1", prepare_time=30, cook_time=60, category_id=1, user_id=1, created_at=datetime.datetime.now())
     # recipe2 = Recipe(title="Recipe 2", description="Description 2", prepare_time=20, cook_time=45, user_id=2, created_at=datetime.datetime.now())
 
     # Create instructions and add them to the session
-    # instruction1 = Instruction(step_number=1, description="Step 1 for Recipe 1", recipe_id=1)
-    # instruction2 = Instruction(step_number=2, description="Step 2 for Recipe 1", recipe_id=1)
+    # instruction1 = Instruction(step_number=1, description="Step 1 for Recipe 1", recipe_id=4)
+    # instruction2 = Instruction(step_number=2, description="Step 2 for Recipe 1", recipe_id=4)
     # instruction3 = Instruction(step_number=1, description="Step 1 for Recipe 2", recipe_id=2)
 
     # # Create categories and add them to the session
@@ -42,6 +42,7 @@ def create_app(db_URI="", test_config=None):
 
     # Add data to the database session and commit the changes
     # with app.app_context():
+    #     recipe1.insert()
     #     instruction1.insert()
     #     instruction2.insert()
     #     instruction3.insert()
@@ -64,9 +65,23 @@ def create_app(db_URI="", test_config=None):
         return response
 
 
-    @app.route('/health')
+    @app.route("/health")
     def health():
         return "Up and Running!"
+
+
+    @app.route("/my-recipes")
+    @login_required
+    def my_recipes():
+        user_id = session["user_id"]
+        recipes = Recipe.query.filter_by(user_id=user_id).order_by(Recipe.created_at.desc())
+        
+        # Paginating recipes
+        paginated_recipes = paginate_items(selection=recipes, request=request, per_page=7)
+
+        # return jsonify(paginated_recipes)
+        return render_template('my-recipes.html', paginated_recipes=paginated_recipes)
+
 
     
     @app.route("/login", methods=["GET", "POST"])
@@ -93,7 +108,6 @@ def create_app(db_URI="", test_config=None):
             user = User.query.filter_by(username=username).first()
 
             # Ensure username exists and password is correct
-            print(check_password_hash(password, user.password_hash))
             if user is None or not check_password_hash(user.password_hash, password):
                 flash(f"Invalid username and/or password", "error")
                 return render_template("login.html")
@@ -165,7 +179,7 @@ def create_app(db_URI="", test_config=None):
         # for i in recipes:
 
 
-        print("HERE ==>\n", recipes)
+        # print("HERE ==>\n", recipes)
 
         return render_template("home.html", recipes=recipes)
         
