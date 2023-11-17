@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+    <h1>Edit Recipe</h1>
+
     <form action="/edit-recipe/{{ recipe.id }}" method="post" class="ms-5 me-5">
         <div class="form-group">
             <label for="title" class="col-form-label">Title</label>

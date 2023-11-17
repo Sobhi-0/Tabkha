@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+    <h1>Create a new recipe</h1>
+
     <!-- create a form to get all the required data for a recipe (title description prepare_time cook_time category_id) to create a recipe-->
     <form action="/add-recipe" method="post" class="ms-5 me-5">
         <!-- add the requried input with labels-->
@@ -35,7 +37,7 @@
             </select>
         </div>
         <!-- add a button to submit the form-->
-        <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        <button type="submit" class="btn btn-primary mt-4">Create</button>
     </form>
     
 {% endblock %}

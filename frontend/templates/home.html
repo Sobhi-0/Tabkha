@@ -14,18 +14,18 @@
         <div class="row">
             <!-- Popular recipe cards -->
             {% for recipe in recipes %}
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark">
                         <!-- Recipe image -->
                         <img src="https://media.istockphoto.com/id/943483254/vector/fresh-tasty-grilled-roasted-chicken-turkey-legs-with-vegetables-sliced-potato-cucumber.jpg?s=612x612&w=0&k=20&c=qNYr2kI9cku2On18No0EsLO7-GYmCtaMbv2ZBKYzrfQ=" class="card-img card-image" alt="...">
                         <div class="card-img-overlay">
                             <h5 class="card-title">{{ recipe.title }}</h5>
-                            <p class="card-text">{{ recipe.description }}</p>
+                            <p class="card-text d-md-block">{{ recipe.description }}</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
                                 <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
                                 <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
                             </svg>
-                            <p class="card-text"><i class="bi bi-stopwatch"></i>{{ recipe.prepare_time + recipe.cook_time }} mins</p>
+                            <p class="card-text d-md-block"><i class="bi bi-stopwatch"></i>{{ recipe.prepare_time + recipe.cook_time }} mins</p>
                         </div>
                     </div>
                 </div>
@@ -34,11 +34,11 @@
                 
 
             <!-- Show More card for Popular Recipes -->
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 col-sm-6 mb-4">
                 <div class="card text-dark">
                     <div class="card-body">
                         <h5 class="card-title">Show More</h5>
-                        <p class="card-text">View all popular recipes</p>
+                        <p class="card-text d-md-block">View all popular recipes</p>
                         <a href="/popular-recipes" class="btn btn-primary">Show More</a>
                     </div>
                 </div>
@@ -52,18 +52,18 @@
         <div class="row">
             <!-- Recommended recipe cards -->
             {% for recipe in recipes %}
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 col-sm-6 mb-4">
                 <div class="card text-bg-dark">
                     <!-- Recipe image -->
                     <img src="https://media.istockphoto.com/id/943483254/vector/fresh-tasty-grilled-roasted-chicken-turkey-legs-with-vegetables-sliced-potato-cucumber.jpg?s=612x612&w=0&k=20&c=qNYr2kI9cku2On18No0EsLO7-GYmCtaMbv2ZBKYzrfQ=" class="card-img card-image" alt="...">
                     <div class="card-img-overlay">
                         <h5 class="card-title">{{ recipe.title }}</h5>
-                        <p class="card-text">{{ recipe.description }}</p>
+                        <p class="card-text d-md-block">{{ recipe.description }}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
                             <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
                             <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
                         </svg>
-                        <p class="card-text"><i class="bi bi-stopwatch"></i>{{ recipe.prepare_time + recipe.cook_time }} mins</p>
+                        <p class="card-text d-md-block"><i class="bi bi-stopwatch"></i>{{ recipe.prepare_time + recipe.cook_time }} mins</p>
                     </div>
                     </div>
                 </div>
@@ -71,11 +71,11 @@
             <!-- Repeat similar cards for other recommended recipes -->
 
             <!-- Show More card for Recommended Recipes -->
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 col-sm-6 mb-4">
                 <div class="card text-dark">
                     <div class="card-body">
                         <h5 class="card-title">Show More</h5>
-                        <p class="card-text">View all recommended recipes</p>
+                        <p class="card-text d-md-block">View all recommended recipes</p>
                         <a href="/recommended-recipes" class="btn btn-primary">Show More</a>
                     </div>
                 </div>
@@ -83,4 +83,16 @@
         </div>
     </section>
 
+
+    {% if session["user_id"] %}
+    <!-- Add Recipe button -->
+    <a href="/add-recipe" class="add-recipe-btn btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+        </svg>
+        <i class="bi bi-plus-circle"></i>  Create Recipe
+    </a>
+    {% endif %}
+    
 {% endblock %}
