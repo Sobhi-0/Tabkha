@@ -73,8 +73,7 @@ def create_app(db_URI="", test_config=None):
     @app.route("/my-recipes")
     @login_required
     def my_recipes():
-        user_id = session["user_id"]
-        recipes = Recipe.query.filter_by(user_id=user_id).order_by(Recipe.created_at.desc())
+        recipes = Recipe.query.filter_by(user_id=session["user_id"]).order_by(Recipe.created_at.desc())
         
         # Paginating recipes
         paginated_recipes = paginate_items(selection=recipes, request=request, per_page=7)
@@ -83,7 +82,53 @@ def create_app(db_URI="", test_config=None):
         return render_template('my-recipes.html', paginated_recipes=paginated_recipes)
 
 
-    
+    @app.route("/add-recipe", methods=["GET", "POST"])
+    @login_required
+    def add_recipe():
+        if request.method == "POST":
+            title = request.form.get("title")
+            description = request.form.get("description")
+            prepare_time = request.form.get("prepare_time")
+            cook_time = request.form.get("cook_time")
+            category_id = request.form.get("category_id")
+
+            categories = Category.query.all()
+            
+            print(title, description, prepare_time, cook_time, category_id)
+
+            # Ensure all fields were submitted
+            if not title or not description or not prepare_time or not cook_time or not category_id:
+                flash(f"Must fill all fields", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            # Ensure prepare_time and cook_time are numbers
+            if not prepare_time.isdigit() or not cook_time.isdigit():
+                flash(f"Prepare time and cook time must be numbers", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            # Ensure category is a number
+            if not category_id.isdigit():
+                flash(f"Category must be a number", "warning")
+
+            # Ensure category exists
+            if not Category.query.filter_by(id=category_id).first():
+                flash(f"Category does not exist", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            # Create a new recipe
+            recipe = Recipe(title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, user_id=session["user_id"], created_at=datetime.datetime.now())
+
+            # Add recipe to the database session and commit the changes
+            recipe.insert()
+
+            flash(f"Recipe added successfully", "success")
+            return redirect("/my-recipes")
+
+        else:
+            categories = Category.query.all()
+            return render_template("add-recipe.html", categories=categories)
+
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         # Forget any user_id

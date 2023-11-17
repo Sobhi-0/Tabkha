@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add Recipe
+{% endblock %}
+
+{% block main %}
+    <!-- create a form to get all the required data for a recipe (title description prepare_time cook_time category_id) to create a recipe-->
+    <form action="/add-recipe" method="post" class="ms-5 me-5">
+        <!-- add the requried input with labels-->
+        <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <input type="text" name="title" required class="form-control" id="title" placeholder="Enter title" value="{{ title }}">
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-form-label">Description</label>
+            <textarea name="description" required class="form-control" id="description" placeholder="Enter description" rows="4">{{ description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="prepare_time" class="col-form-label">Prepare Time</label>
+            <input type="number" name="prepare_time" required class="form-control" id="prepare_time" placeholder="Enter prepare time" value="{{ prepare_time }}">
+        </div>
+        <div class="form-group">
+            <label for="cook_time" class="col-form-label">Cook Time</label>
+            <input type="number" name="cook_time" required class="form-control" id="cook_time" placeholder="Enter cook time" value="{{ cook_time }}">
+        </div>
+        <!-- Updated template -->
+        <div class="form-group">
+            <label for="category_id" class="col-form-label">Category</label>
+            <select name="category_id" class="form-control" id="category_id" required>
+                <option selected disabled>Select a category</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == category_id %} selected {% endif %}>{{ category.category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- add a button to submit the form-->
+        <button type="submit" class="btn btn-primary mt-4">Submit</button>
+    </form>
+    
+{% endblock %}
