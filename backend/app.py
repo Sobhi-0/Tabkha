@@ -94,7 +94,7 @@ def create_app(db_URI="", test_config=None):
 
             categories = Category.query.all()
             
-            print(title, description, prepare_time, cook_time, category_id)
+            # print(title, description, prepare_time, cook_time, category_id)
 
             # Ensure all fields were submitted
             if not title or not description or not prepare_time or not cook_time or not category_id:
@@ -127,6 +127,62 @@ def create_app(db_URI="", test_config=None):
         else:
             categories = Category.query.all()
             return render_template("add-recipe.html", categories=categories)
+
+
+    @app.route("/edit-recipe/<int:recipe_id>", methods=["GET", "POST"])
+    @login_required
+    def edit_recipe(recipe_id):
+        if request.method == "POST":
+            title = request.form.get("title")
+            description = request.form.get("description")
+            prepare_time = request.form.get("prepare_time")
+            cook_time = request.form.get("cook_time")
+            category_id = request.form.get("category_id")
+
+            categories = Category.query.all()
+            
+            # Ensure all fields were submitted
+            if not title or not description or not prepare_time or not cook_time or not category_id:
+                flash(f"Must fill all fields", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            # Ensure prepare_time and cook_time are numbers
+            if not prepare_time.isdigit() or not cook_time.isdigit():
+                flash(f"Prepare time and cook time must be numbers", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            # Ensure category is a number
+            if not category_id.isdigit():
+                flash(f"Category must be a number", "warning")
+
+            # Ensure category exists
+            if not Category.query.filter_by(id=category_id).first():
+                flash(f"Category does not exist", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            if session["user_id"] != recipe.user_id:
+                flash(f"You are not authorized to edit this recipe", "error")
+                return redirect("/my-recipes")
+
+            recipe.title = title
+            recipe.description = description
+            recipe.prepare_time = prepare_time
+            recipe.cook_time = cook_time
+
+            recipe.update()
+
+            flash(f"Recipe updated!", "success")
+            return redirect("/my-recipes")
+
+        else:
+            categories = Category.query.all()
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            if session["user_id"] != recipe.user_id:
+                flash(f"You are not authorized to edit this recipe", "error")
+                return redirect("/my-recipes")
+                
+            return render_template("/edit-recipe.html", recipe=recipe, categories=categories)
 
 
     @app.route("/login", methods=["GET", "POST"])
