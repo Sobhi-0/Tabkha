@@ -94,7 +94,8 @@ class Recipe(BaseModel):
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
-    recipes = db.relationship('Instruction', backref='recipe', lazy=True)
+    instructions = db.relationship('Instruction', backref='recipe', lazy=True)
+    ingrediants = db.relationship('Ingrediant', backref='recipe', lazy=True)
 
 
 class Instruction(BaseModel):
@@ -104,6 +105,14 @@ class Instruction(BaseModel):
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
     step_number = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False)
+
+
+class Ingrediant(BaseModel):
+    __tablename__ = "ingrediants"
+
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
+    item = db.Column(db.Text, nullable=False)
 
 
 class Category(BaseModel):
