@@ -94,8 +94,8 @@ class Recipe(BaseModel):
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
-    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant', lazy=True)
-    instructions = db.relationship('Instruction', backref='recipe_instruction', lazy=True)
+    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant', lazy='joined', order_by="Ingrediant.item_number")
+    instructions = db.relationship('Instruction', backref='recipe_instruction', lazy='joined')
 
 
 class Ingrediant(BaseModel):

@@ -1,5 +1,7 @@
 import datetime
 
+from sqlalchemy import text
+
 from database.models import (Category, Instruction, Ingrediant, Recipe, User, db, setup_db)
 from flask import (Flask, flash, g, jsonify, redirect, render_template,
                    request, session, url_for)
@@ -140,23 +142,30 @@ def create_app(db_URI="", test_config=None):
     @login_required
     def edit_recipe(recipe_id):
         if request.method == "POST":
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            if session["user_id"] != recipe.user_id:
+                flash(f"You are not authorized to edit this recipe", "error")
+                return redirect("/my-recipes")
+
             title = request.form.get("title")
             description = request.form.get("description")
             prepare_time = request.form.get("prepare_time")
             cook_time = request.form.get("cook_time")
             category_id = request.form.get("category_id")
+            ingrediants = request.form.getlist("ingrediants[]")
+            instructions = request.form.getlist("instructions[]")
 
             categories = Category.query.all()
             
             # Ensure all fields were submitted
-            if not title or not description or not prepare_time or not cook_time or not category_id:
+            if not title or not description or not prepare_time or not cook_time or not category_id or not instructions or not ingrediants:
                 flash("Must fill all fields", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             # Ensure prepare_time and cook_time are numbers
             if not prepare_time.isdigit() or not cook_time.isdigit():
                 flash("Prepare time and cook time must be numbers", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             # Ensure category is a number
             if not category_id.isdigit():
@@ -165,7 +174,7 @@ def create_app(db_URI="", test_config=None):
             # Ensure category exists
             if not Category.query.filter_by(id=category_id).first():
                 flash("Category does not exist", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             recipe = Recipe.query.filter_by(id=recipe_id).first()
             if session["user_id"] != recipe.user_id:
@@ -176,7 +185,20 @@ def create_app(db_URI="", test_config=None):
             recipe.description = description
             recipe.prepare_time = prepare_time
             recipe.cook_time = cook_time
+            recipe.category_id = category_id
 
+            # Delete all ingrediants and instructions
+            Ingrediant.query.filter_by(recipe_id=recipe_id).delete()
+            Instruction.query.filter_by(recipe_id=recipe_id).delete()
+
+            # Add ingrediants to the recipe
+            for i, ingrediant in enumerate(ingrediants):
+                recipe.ingrediants.append(Ingrediant(item_number=i+1, item=ingrediant))
+
+            # Add instructions to the recipe
+            for i, instruction in enumerate(instructions):
+                recipe.instructions.append(Instruction(step_number=i+1, description=instruction))
+                
             recipe.update()
 
             flash("Recipe updated!", "success")
@@ -189,8 +211,21 @@ def create_app(db_URI="", test_config=None):
             if session["user_id"] != recipe.user_id:
                 flash("You are not authorized to edit this recipe", "error")
                 return redirect("/my-recipes")
-                
-            return render_template("/edit-recipe.html", recipe=recipe, categories=categories)
+
+            # Get ingrediants and instructions for the recipe
+            ingrediants_query = text("SELECT * FROM ingrediants WHERE recipe_id = :recipe_id ORDER BY item_number")
+            parameters = {"recipe_id": recipe_id}
+            ingrediants_res = db.session.execute(ingrediants_query, parameters)
+            ingrediants_rows = ingrediants_res.fetchall()
+            ingrediants = [ingrediant for ingrediant in ingrediants_rows]
+
+            instructions_query = text("SELECT * FROM instructions WHERE recipe_id = :recipe_id ORDER BY step_number")
+            parameters = {"recipe_id": recipe_id}
+            instructions_res = db.session.execute(instructions_query, parameters)
+            instructions_rows = instructions_res.fetchall()
+            instructions = [instruction for instruction in instructions_rows]
+
+            return render_template("/edit-recipe.html", recipe=recipe, categories=categories, ingrediants=ingrediants, instructions=instructions)
 
 
     @app.route("/login", methods=["GET", "POST"])
