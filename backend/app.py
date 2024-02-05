@@ -237,26 +237,38 @@ def create_app(db_URI="", test_config=None):
 
             # Ensure all fields were submitted
             if  not firstname or not lastname or not email or not username or not password1 or not password2:
-                flash(f"Must fill all fields", "warning")
-                return render_template("register.html")
-
-            if password1 != password2:
-                flash("Passwords do not match", "error")
+                flash("Must fill all fields", "warning")
                 return render_template("register.html")
 
             if not valid_email(email):
                 flash("Email not valid", "error")
-                return render_template("register.html")
+                return render_template("register.html", firstname=firstname, lastname=lastname, username=username)
 
             if not valid_password(password1):
                 flash("Password does not meet constraints", "error")
-                return render_template("register.html")
+                return render_template("register.html", firstname=firstname, lastname=lastname, username=username, email=email)
+
+            if password1 != password2:
+                flash("Passwords do not match", "error")
+                return render_template("register.html", firstname=firstname, lastname=lastname, username=username, email=email)
+
+            # Ensure username is unique
+            exist_user = User.query.filter_by(username=username).first()
+            if exist_user:
+                flash("Username already exists", "error")
+                return render_template("register.html", firstname=firstname, lastname=lastname, email=email)
+            
+            # Ensure email is unique
+            exist_email = User.query.filter_by(email=email).first()
+            if exist_email:
+                flash("Email already exists", "error")
+                return render_template("register.html", firstname=firstname, lastname=lastname, username=username)
 
             new_user = User(first_name=firstname, last_name=lastname, username=username, email=email, password_hash=generate_password_hash(password1), created_at=datetime.datetime.now())
             new_user.insert()
 
             flash("Account created successfully", "success")
-            return redirect("/login")
+            return render_template("login.html")
 
         else:
             return render_template("register.html")

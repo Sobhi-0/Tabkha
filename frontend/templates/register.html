@@ -13,18 +13,18 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input autocomplete="off" autofocus class="form-control" id="firstname" name="firstname" placeholder="First Name" type="text" required>
+                            <input autocomplete="off" autofocus class="form-control" id="firstname" name="firstname" placeholder="First Name" type="text" {% if firstname %} value="{{ firstname }}" {% endif %} required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input autocomplete="off" class="form-control" id="lastname" name="lastname" placeholder="Last Name" type="text" required>
+                            <input autocomplete="off" class="form-control" id="lastname" name="lastname" placeholder="Last Name" type="text" {% if lastname %} value="{{ lastname }}" {% endif %} required>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <input autocomplete="off" class="form-control" id="username" name="username" placeholder="Username" type="text" required>
+                        <input autocomplete="off" class="form-control" id="username" name="username" placeholder="Username" type="text" {% if username %} value="{{ username }}" {% endif %} required>
                     </div>
                     <div class="mb-3">
-                        <input autocomplete="off" class="form-control" id="email" name="email" placeholder="Email" type="text" required>
+                        <input autocomplete="off" class="form-control" id="email" name="email" placeholder="Email" type="text" {% if email %} value="{{ email }}" {% endif %} required>
                     </div>
 
                     <div class="row">
