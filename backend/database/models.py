@@ -101,7 +101,7 @@ class Recipe(BaseModel):
 class Ingrediant(BaseModel):
     __tablename__ = "ingrediants"
 
-    id = db.Column(db.Integer, primary_key=True)
+    # id = db.Column(db.Integer, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
     item_number = db.Column(db.Integer, nullable=False)
     item = db.Column(db.Text, nullable=False)
@@ -114,7 +114,7 @@ class Ingrediant(BaseModel):
 class Instruction(BaseModel):
     __tablename__ = "instructions"
 
-    id = db.Column(db.Integer, primary_key=True)
+    # id = db.Column(db.Integer, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
     step_number = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False)

@@ -1,7 +1,6 @@
 import datetime
 
-from database.models import (Category, Instruction, Recipe, User, db,
-                             db_drop_and_create_all, setup_db)
+from database.models import (Category, Instruction, Ingrediant, Recipe, User, db, setup_db)
 from flask import (Flask, flash, g, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_session import Session
@@ -91,37 +90,45 @@ def create_app(db_URI="", test_config=None):
             prepare_time = request.form.get("prepare_time")
             cook_time = request.form.get("cook_time")
             category_id = request.form.get("category_id")
+            instructions = request.form.getlist("instructions[]")
+            ingrediants = request.form.getlist("ingrediants[]")
 
-            categories = Category.query.all()
-            
-            # print(title, description, prepare_time, cook_time, category_id)
+            categories = Category.query.all()            
 
             # Ensure all fields were submitted
-            if not title or not description or not prepare_time or not cook_time or not category_id:
-                flash(f"Must fill all fields", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+            if not title or not description or not prepare_time or not cook_time or not category_id or not instructions or not ingrediants:
+                flash("Must fill all fields", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             # Ensure prepare_time and cook_time are numbers
             if not prepare_time.isdigit() or not cook_time.isdigit():
-                flash(f"Prepare time and cook time must be numbers", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+                flash("Prepare time and cook time must be numbers", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             # Ensure category is a number
             if not category_id.isdigit():
-                flash(f"Category must be a number", "warning")
+                flash("Category must be a number", "warning")
 
             # Ensure category exists
             if not Category.query.filter_by(id=category_id).first():
-                flash(f"Category does not exist", "warning")
-                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
+                flash("Category does not exist", "warning")
+                return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
             # Create a new recipe
             recipe = Recipe(title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, user_id=session["user_id"], created_at=datetime.datetime.now())
 
+            # Add ingrediants to the recipe
+            for i, ingrediant in enumerate(ingrediants):
+                recipe.ingrediants.append(Ingrediant(item_number=i+1, item=ingrediant))
+
+            # Add instructions to the recipe
+            for i, instruction in enumerate(instructions):
+                recipe.instructions.append(Instruction(step_number=i+1, description=instruction))
+            
             # Add recipe to the database session and commit the changes
             recipe.insert()
 
-            flash(f"Recipe added successfully", "success")
+            flash("Recipe added successfully", "success")
             return redirect("/my-recipes")
 
         else:
@@ -143,26 +150,26 @@ def create_app(db_URI="", test_config=None):
             
             # Ensure all fields were submitted
             if not title or not description or not prepare_time or not cook_time or not category_id:
-                flash(f"Must fill all fields", "warning")
+                flash("Must fill all fields", "warning")
                 return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
 
             # Ensure prepare_time and cook_time are numbers
             if not prepare_time.isdigit() or not cook_time.isdigit():
-                flash(f"Prepare time and cook time must be numbers", "warning")
+                flash("Prepare time and cook time must be numbers", "warning")
                 return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
 
             # Ensure category is a number
             if not category_id.isdigit():
-                flash(f"Category must be a number", "warning")
+                flash("Category must be a number", "warning")
 
             # Ensure category exists
             if not Category.query.filter_by(id=category_id).first():
-                flash(f"Category does not exist", "warning")
+                flash("Category does not exist", "warning")
                 return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id)
 
             recipe = Recipe.query.filter_by(id=recipe_id).first()
             if session["user_id"] != recipe.user_id:
-                flash(f"You are not authorized to edit this recipe", "error")
+                flash("You are not authorized to edit this recipe", "error")
                 return redirect("/my-recipes")
 
             recipe.title = title
@@ -172,14 +179,15 @@ def create_app(db_URI="", test_config=None):
 
             recipe.update()
 
-            flash(f"Recipe updated!", "success")
+            flash("Recipe updated!", "success")
             return redirect("/my-recipes")
 
         else:
             categories = Category.query.all()
             recipe = Recipe.query.filter_by(id=recipe_id).first()
+
             if session["user_id"] != recipe.user_id:
-                flash(f"You are not authorized to edit this recipe", "error")
+                flash("You are not authorized to edit this recipe", "error")
                 return redirect("/my-recipes")
                 
             return render_template("/edit-recipe.html", recipe=recipe, categories=categories)
@@ -197,12 +205,12 @@ def create_app(db_URI="", test_config=None):
 
             # Ensure username was submitted
             if not username:
-                flash(f"Enter email", "warning")
+                flash("Enter email", "warning")
                 return render_template("login.html")
 
             # Ensure password was submitted
             elif not password:
-                flash(f"Enter password", "warning")
+                flash("Enter password", "warning")
                 return render_template("login.html")
 
             # Query database for username
@@ -210,14 +218,14 @@ def create_app(db_URI="", test_config=None):
 
             # Ensure username exists and password is correct
             if user is None or not check_password_hash(user.password_hash, password):
-                flash(f"Invalid username and/or password", "error")
+                flash("Invalid username and/or password", "error")
                 return render_template("login.html")
 
             # Remember which user has logged in
             session["user_id"] = user.id
 
             # Redirect user to home page
-            flash(f"Welcome back, {user.first_name}!", "info")
+            flash("Welcome back, {user.first_name}!", "info")
             return redirect("/")
 
         # User reached route via GET (as by clicking a link or via redirect)
@@ -240,6 +248,7 @@ def create_app(db_URI="", test_config=None):
                 flash("Must fill all fields", "warning")
                 return render_template("register.html")
 
+            # Ensure valid email and password
             if not valid_email(email):
                 flash("Email not valid", "error")
                 return render_template("register.html", firstname=firstname, lastname=lastname, username=username)
@@ -285,21 +294,13 @@ def create_app(db_URI="", test_config=None):
     
     @app.route("/")
     def index():
+        # Recipes to be displayed on the home page
         recipes = Recipe.query.order_by(Recipe.id.desc()).limit(5).all()
-
-        dict = {}
-
-        # for i in recipes:
-
-
-        # print("HERE ==>\n", recipes)
 
         return render_template("home.html", recipes=recipes)
         
 
-
     return app
-
 
 
 app = create_app()
