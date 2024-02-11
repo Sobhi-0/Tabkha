@@ -23,33 +23,6 @@ def create_app(db_URI="", test_config=None):
     # with app.app_context():
     #     db_drop_and_create_all()
 
-    # print("lol1")
-    # Create users and add them to the session
-    # user1 = User(first_name="John", last_name="Doe", email="john@example.com", password_hash="hashed_password1", created_at=datetime.datetime.now())
-    # user2 = User(first_name="Jane", last_name="Smith", email="jane@example.com", password_hash="hashed_password2", created_at=datetime.datetime.now())
-
-    # Create recipes and add them to the session
-    # recipe1 = Recipe(title="Recipe-289", description="Description4 1", prepare_time=30, cook_time=60, category_id=1, user_id=1, created_at=datetime.datetime.now())
-    # recipe2 = Recipe(title="Recipe 2", description="Description 2", prepare_time=20, cook_time=45, user_id=2, created_at=datetime.datetime.now())
-
-    # Create instructions and add them to the session
-    # instruction1 = Instruction(step_number=1, description="Step 1 for Recipe 1", recipe_id=4)
-    # instruction2 = Instruction(step_number=2, description="Step 2 for Recipe 1", recipe_id=4)
-    # instruction3 = Instruction(step_number=1, description="Step 1 for Recipe 2", recipe_id=2)
-
-    # # Create categories and add them to the session
-    # category1 = Category(category="Category 1")
-    # category2 = Category(category="Category 2")
-
-    # Add data to the database session and commit the changes
-    # with app.app_context():
-    #     recipe1.insert()
-    #     instruction1.insert()
-    #     instruction2.insert()
-    #     instruction3.insert()
-    #     category1.insert()
-    #     category2.insert()
-
 
     # configure session to use filesystem (instead of signed cookies)
     app.config["SESSION_PERMANENT"] = False
@@ -81,6 +54,31 @@ def create_app(db_URI="", test_config=None):
 
         # return jsonify(paginated_recipes)
         return render_template('my-recipes.html', paginated_recipes=paginated_recipes)
+
+
+    @app.route("/recipe/<int:recipe_id>", methods=["GET"])
+    def recipe(recipe_id):
+        recipe = Recipe.query.filter_by(id=recipe_id).first()
+
+        # Ensure recipe exists
+        if not recipe:
+            flash("Recipe not found", "error")
+            return render_template("home.html")
+
+        # Get ingrediants and instructions for the recipe
+        ingrediants_query = text("SELECT * FROM ingrediants WHERE recipe_id = :recipe_id ORDER BY item_number")
+        parameters = {"recipe_id": recipe_id}
+        ingrediants_res = db.session.execute(ingrediants_query, parameters)
+        ingrediants_rows = ingrediants_res.fetchall()
+        ingrediants = [ingrediant for ingrediant in ingrediants_rows]
+    
+        instructions_query = text("SELECT * FROM instructions WHERE recipe_id = :recipe_id ORDER BY step_number")
+        parameters = {"recipe_id": recipe_id}
+        instructions_res = db.session.execute(instructions_query, parameters)
+        instructions_rows = instructions_res.fetchall()
+        instructions = [instruction for instruction in instructions_rows]
+
+        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions)
 
 
     @app.route("/add-recipe", methods=["GET", "POST"])

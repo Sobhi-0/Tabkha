@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Recipe Details
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>{{ recipe.name }}</h1>
+            <ul class="list-inline">
+                <li class="list-inline-item">Preparation Time: {{ recipe.prep_time }} minutes</li>
+                <li class="list-inline-item">Cooking Time: {{ recipe.cook_time }} minutes</li>
+                <li class="list-inline-item">Category: {{ recipe.category.category }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="recipe-background" style="background-image: url('{{ recipe.image_url }}');">
+                <p>{{ recipe.description }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Ingredients</h2>
+            <ul class="list-group">
+                {% for ingredient in ingredients %}
+                    <li class="list-group-item">{{ ingredient.item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2>Instructions</h2>
+            <ol>
+                {% for instruction in instructions %}
+                    <li>{{ instruction.description }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}

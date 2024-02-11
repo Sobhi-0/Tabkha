@@ -5,11 +5,6 @@
 {% endblock %}
 
 {% block main %}
-    <script>
-        function editRecipe(recipeId) {
-            window.location.href = "/edit-recipe/" + recipeId;
-        }
-    </script>
 
     <div class="container">
         <h1>My Recipes</h1>
@@ -21,21 +16,18 @@
                 <li class="list-group-item">
                     <div class="row">
                         <!-- Recipe Image Column -->
-                        {% if recipe.image %}
-                        <div class="col-md-3">
-                            <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid">
+                        <div class="col-md-3" onclick="viewRecipe({{ recipe.id }})">
+                            {% if recipe.image %}
+                                <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid">
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <div class="col-md-3">
-                            <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid">
-                        </div>
-                        {% endif %}
                         
                         <!-- Recipe Details Column -->
-                        <div class="col-md-9">
+                        <div class="col-md-9" onclick="viewRecipe({{ recipe.id }})">
                             <h5>{{ recipe.title }}</h5>
                             <p>{{ recipe.description }}</p>
-                            <!-- Add other recipe details as needed -->
                         </div>
 
                         <!-- Edit Button Column -->
@@ -93,4 +85,15 @@
         </a>
         {% endif %}
     </div>
+
+    <script>
+        function editRecipe(recipeId) {
+            window.location.href = "/edit-recipe/" + recipeId;
+        }
+
+        function viewRecipe(recipeId) {
+            window.location.href = "/recipe/" + recipeId;
+        }
+    </script>
+
 {% endblock %}
