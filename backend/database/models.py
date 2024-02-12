@@ -6,11 +6,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
-database_path = os.environ.get('DATABASE_URL')
+db_path = os.environ.get('DATABASE_URL')
 
 db = SQLAlchemy()
 
-def setup_db(app, database_path=database_path):
+def setup_db(app, database_path=db_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
@@ -94,8 +94,8 @@ class Recipe(BaseModel):
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
-    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant', lazy='joined', order_by="Ingrediant.item_number")
-    instructions = db.relationship('Instruction', backref='recipe_instruction', lazy='joined')
+    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant', cascade="all, delete-orphan", lazy='joined', order_by="Ingrediant.item_number")
+    instructions = db.relationship('Instruction', backref='recipe_instruction', cascade="all, delete-orphan", lazy='joined')
 
 
 class Ingrediant(BaseModel):

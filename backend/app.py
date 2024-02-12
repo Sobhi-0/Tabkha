@@ -3,8 +3,8 @@ import datetime
 from sqlalchemy import text
 
 from database.models import (Category, Instruction, Ingrediant, Recipe, User, db, setup_db)
-from flask import (Flask, flash, g, jsonify, redirect, render_template,
-                   request, session, url_for)
+from flask import (Flask, flash, g, redirect, render_template,
+                   request, session)
 from flask_session import Session
 from helpers import login_required, paginate_items, valid_email, valid_password
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -14,6 +14,9 @@ def create_app(db_URI="", test_config=None):
     # create and configure the app
     app = Flask(__name__)
     app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
+
+    # Enable template auto-reloading
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     if db_URI:
         setup_db(app, db_URI)
@@ -142,7 +145,7 @@ def create_app(db_URI="", test_config=None):
         if request.method == "POST":
             recipe = Recipe.query.filter_by(id=recipe_id).first()
             if session["user_id"] != recipe.user_id:
-                flash(f"You are not authorized to edit this recipe", "error")
+                flash("You are not authorized to edit this recipe", "error")
                 return redirect("/my-recipes")
 
             title = request.form.get("title")
@@ -226,6 +229,29 @@ def create_app(db_URI="", test_config=None):
             return render_template("/edit-recipe.html", recipe=recipe, categories=categories, ingrediants=ingrediants, instructions=instructions)
 
 
+    @app.route("/recipe/<int:recipe_id>", methods=["DELETE"])
+    @login_required
+    def delete_recipe(recipe_id):
+        # Paginating recipes
+        recipes = Recipe.query.filter_by(user_id=session["user_id"]).order_by(Recipe.created_at.desc())
+        paginated_recipes = paginate_items(selection=recipes, request=request, per_page=7)
+
+        recipe = Recipe.query.filter_by(id=recipe_id).first()
+
+        if not recipe:
+            flash("Recipe doesn't exist", "error")
+            return render_template("my-recipes.html", paginated_recipes=paginated_recipes)
+            
+        if session["user_id"] != recipe.user_id:
+            flash("You are not authorized to delete this recipe", "error")
+            return render_template("my-recipes.html", paginated_recipes=paginated_recipes)
+
+        recipe.delete()
+
+        flash("Recipe deleted!", "success")
+        return render_template("my-recipes.html", paginated_recipes=paginated_recipes)
+
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         # Forget any user_id
@@ -258,7 +284,7 @@ def create_app(db_URI="", test_config=None):
             session["user_id"] = user.id
 
             # Redirect user to home page
-            flash("Welcome back, {user.first_name}!", "info")
+            flash(f"Welcome back, {user.first_name}!", "info")
             return redirect("/")
 
         # User reached route via GET (as by clicking a link or via redirect)

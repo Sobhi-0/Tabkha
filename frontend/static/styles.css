@@ -20,11 +20,22 @@
     background-color: #ababab;  /* Add the background color you want on hover */
 }
 
+/* Style for edit button */
+.edit-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 /* Style for the delete button */
 .delete-button {
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: 50px;
     transform: translateY(-50%);
     background: none;
     border: none;
@@ -56,3 +67,4 @@
 .card:hover {
     transform: scale(1.05);  /* Add a scale effect to increase the card size */
 }
+
