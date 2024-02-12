@@ -59,6 +59,7 @@ def create_app(db_URI="", test_config=None):
         return render_template('my-recipes.html', paginated_recipes=paginated_recipes)
 
 
+    # Recipe details
     @app.route("/recipe/<int:recipe_id>", methods=["GET"])
     def recipe(recipe_id):
         recipe = Recipe.query.filter_by(id=recipe_id).first()
@@ -67,6 +68,9 @@ def create_app(db_URI="", test_config=None):
         if not recipe:
             flash("Recipe not found", "error")
             return render_template("home.html")
+
+        # Get the username of the recipe owner
+        user = User.query.filter_by(id=recipe.user_id).first()
 
         # Get ingrediants and instructions for the recipe
         ingrediants_query = text("SELECT * FROM ingrediants WHERE recipe_id = :recipe_id ORDER BY item_number")
@@ -81,7 +85,7 @@ def create_app(db_URI="", test_config=None):
         instructions_rows = instructions_res.fetchall()
         instructions = [instruction for instruction in instructions_rows]
 
-        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions)
+        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions, user=user)
 
 
     @app.route("/add-recipe", methods=["GET", "POST"])

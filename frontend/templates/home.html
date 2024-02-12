@@ -17,7 +17,7 @@
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark" onclick="viewRecipe({{ recipe.id }})">
                         <!-- Recipe image -->
-                        <img src="https://media.istockphoto.com/id/943483254/vector/fresh-tasty-grilled-roasted-chicken-turkey-legs-with-vegetables-sliced-potato-cucumber.jpg?s=612x612&w=0&k=20&c=qNYr2kI9cku2On18No0EsLO7-GYmCtaMbv2ZBKYzrfQ=" class="card-img card-image" alt="...">
+                        <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
                         <div class="card-img-overlay">
                             <h5 class="card-title">{{ recipe.title }}</h5>
                             <p class="card-text d-md-block">{{ recipe.description }}</p>
@@ -55,7 +55,7 @@
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark" onclick="viewRecipe({{ recipe.id }})">
                         <!-- Recipe image -->
-                        <img src="https://media.istockphoto.com/id/943483254/vector/fresh-tasty-grilled-roasted-chicken-turkey-legs-with-vegetables-sliced-potato-cucumber.jpg?s=612x612&w=0&k=20&c=qNYr2kI9cku2On18No0EsLO7-GYmCtaMbv2ZBKYzrfQ=" class="card-img card-image" alt="...">
+                        <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
                         <div class="card-img-overlay">
                             <h5 class="card-title">{{ recipe.title }}</h5>
                             <p class="card-text d-md-block">{{ recipe.description }}</p>
