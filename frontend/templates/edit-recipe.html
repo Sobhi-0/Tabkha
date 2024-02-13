@@ -33,7 +33,111 @@
                 {% endfor %}
             </select>
         </div>
+
+         <!-- Ingrediants fields -->
+         <div class="form-group">
+            <label class="col-form-label">Ingrediants</label>
+            <div id="ingrediantsContainer">
+                {% for ingrediant in ingrediants %}
+                    <div class="ingrediant-item mb-2">
+                        <div class="input-group">
+                            <span class="input-group-text">{{ loop.index }}</span>
+                            <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant.item }}">
+                            <!-- <textarea name="ingrediants[]" required class="form-control" placeholder="Enter ingrediant">{{ ingrediant }}</textarea> -->
+                            {% if loop.index != 1 %}
+                                <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove{{ loop.index }}</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-success" onclick="addIngrediant()">Add Ingrediant</button>
+        </div>
+
+         <!-- Instruction fields -->
+         <div class="form-group">
+            <label class="col-form-label">Instructions</label>
+            <div id="instructionsContainer">
+                {% for instruction in instructions %}
+                    <div class="instruction-item mb-2">
+                        <div class="input-group">
+                            <span class="input-group-text">{{ loop.index }}</span>
+                            <textarea name="instructions[]" required class="form-control" placeholder="Enter instruction">{{ instruction.description }}</textarea>
+                            {% if loop.index > 1 %}
+                                <button type="button" class="btn btn-danger" onclick="removeInstruction(this)">Remove</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-success" onclick="addInstruction()">Add Instruction</button>
+        </div>
+    
         <button type="submit" class="btn btn-primary mt-4">Save Changes</button>
     </form>
+
+    <script>
+        function addInstruction() {
+            var container = document.getElementById('instructionsContainer');
+            var itemCount = container.getElementsByClassName('instruction-item').length + 1;
+            console.log(itemCount);
+            
+            var instructionItem = document.createElement('div');
+            instructionItem.className = 'instruction-item mb-2';
+    
+            instructionItem.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${itemCount}</span>
+                    <textarea name="instructions[]" required class="form-control" placeholder="Enter instruction"></textarea>
+                    <button type="button" class="btn btn-danger" onclick="removeInstruction(this)">Remove</button>
+               </div>
+            `;
+    
+            container.appendChild(instructionItem);
+        }
+    
+        function removeInstruction(button) {
+            var instructionItem = button.closest('.instruction-item');
+            instructionItem.remove();
+            
+            // Update instruction numbers
+            var container = document.getElementById('instructionsContainer');
+            var items = container.getElementsByClassName('instruction-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].querySelector('.input-group-text').textContent = i + 1;
+            }
+        }
+        
+        function addIngrediant() {
+            var container = document.getElementById('ingrediantsContainer');
+            var itemCount = container.getElementsByClassName('ingrediant-item').length + 1;
+            console.log(itemCount);
+            
+            var ingrediantItem = document.createElement('div');
+            ingrediantItem.className = 'ingrediant-item mb-2';
+    
+            ingrediantItem.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${itemCount}</span>
+                    <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant">
+                    <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                </div>
+            `;
+    
+            container.appendChild(ingrediantItem);
+        }
+    
+        function removeIngrediant(button) {
+            var ingrediantItem = button.closest('.ingrediant-item');
+            ingrediantItem.remove();
+    
+            // Update ingrediant numbers
+            var container = document.getElementById('ingrediantsContainer');
+            var items = container.getElementsByClassName('ingrediant-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].querySelector('.input-group-text').textContent = i + 1;
+            }
+        }
+    </script>
     
 {% endblock %}

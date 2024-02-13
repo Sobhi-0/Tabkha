@@ -26,18 +26,136 @@
             <label for="cook_time" class="col-form-label">Cook Time</label>
             <input type="number" name="cook_time" required class="form-control" id="cook_time" placeholder="Enter cook time" value="{{ cook_time }}">
         </div>
-        <!-- Updated template -->
         <div class="form-group">
             <label for="category_id" class="col-form-label">Category</label>
             <select name="category_id" class="form-control" id="category_id" required>
-                <option selected disabled>Select a category</option>
+                <option value="">Select a category</option>
                 {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category.id == category_id %} selected {% endif %}>{{ category.category }}</option>
+                    <option value="{{ category.id }}">{{ category.category }}</option>
                 {% endfor %}
             </select>
         </div>
-        <!-- add a button to submit the form-->
-        <button type="submit" class="btn btn-primary mt-4">Create</button>
+
+         <!-- Ingrediants fields -->
+         <div class="form-group">
+            <label class="col-form-label">Ingrediants</label>
+            <div id="ingrediantsContainer">
+                {% if ingrediants %}
+                    {% for ingrediant in ingrediants %}
+                        <div class="ingrediant-item mb-2">
+                            <div class="input-group">
+                                <span class="input-group-text">{{ loop.index }}</span>
+                                <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant }}">
+                                {% if loop.index > 1 %}
+                                <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="ingrediant-item mb-2">
+                        <div class="input-group">
+                            <span class="input-group-text">1</span>
+                            <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant }}">
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-success" onclick="addIngrediant()">Add Ingrediant</button>
+        </div>
+
+         <!-- Instruction fields -->
+         <div class="form-group">
+            <label class="col-form-label">Instructions</label>
+            <div id="instructionsContainer">
+                {% if instructions %}
+                    {% for instruction in instructions %}
+                        <div class="instruction-item mb-2">
+                            <div class="input-group">
+                                <span class="input-group-text">{{ loop.index }}</span>
+                                <textarea name="instructions[]" required class="form-control" placeholder="Enter instruction">{{ instruction }}</textarea>
+                                {% if loop.index > 1 %}
+                                    <button type="button" class="btn btn-danger" onclick="removeInstruction(this)">Remove</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                        <div class="instruction-item mb-2">
+                            <div class="input-group">
+                                <span class="input-group-text">1</span>
+                                <textarea name="instructions[]" required class="form-control" placeholder="Enter instruction"></textarea>
+                            </div>
+                        </div>
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-success" onclick="addInstruction()">Add Instruction</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Create Recipe</button>
     </form>
+
+    <script>
+        function addInstruction() {
+            var container = document.getElementById('instructionsContainer');
+            var itemCount = container.getElementsByClassName('instruction-item').length + 1;
+    
+            var instructionItem = document.createElement('div');
+            instructionItem.className = 'instruction-item mb-2';
+    
+            instructionItem.innerHTML = `
+                <div class="input-group">
+                   <span class="input-group-text">${itemCount}</span>
+                   <textarea name="instructions[]" required class="form-control" placeholder="Enter instruction"></textarea>
+                   <button type="button" class="btn btn-danger" onclick="removeInstruction(this)">Remove</button>
+               </div>
+            `;
+    
+            container.appendChild(instructionItem);
+        }
+    
+        function removeInstruction(button) {
+            var instructionItem = button.closest('.instruction-item');
+            instructionItem.remove();
+    
+            // Update instruction numbers
+            var container = document.getElementById('instructionsContainer');
+            var items = container.getElementsByClassName('instruction-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].querySelector('.input-group-text').textContent = i + 1;
+            }
+        }
+
+        function addIngrediant() {
+            var container = document.getElementById('ingrediantsContainer');
+            var itemCount = container.getElementsByClassName('ingrediant-item').length + 1;
+    
+            var ingrediantItem = document.createElement('div');
+            ingrediantItem.className = 'ingrediant-item mb-2';
+    
+            ingrediantItem.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${itemCount}</span>
+                    <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant">
+                    <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                </div>
+            `;
+    
+            container.appendChild(ingrediantItem);
+        }
+    
+        function removeIngrediant(button) {
+            var ingrediantItem = button.closest('.ingrediant-item');
+            ingrediantItem.remove();
+    
+            // Update ingrediant numbers
+            var container = document.getElementById('ingrediantsContainer');
+            var items = container.getElementsByClassName('ingrediant-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].querySelector('.input-group-text').textContent = i + 1;
+            }
+        }
+    </script>
+    
     
 {% endblock %}
