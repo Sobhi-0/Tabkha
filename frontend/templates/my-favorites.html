@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Favorites
+{% endblock %}
+
+{% block main %}
+
+    <div class="container">
+        <h1 class="title">My Favorites</h1> <br>
+        {% if recipes|length > 0 %}
+            <!-- Displaying Paginated Recipes -->
+            <ul class="list-group mb-4">
+                <!-- Display each recipe as a list item with image, title, and description -->
+                {% for recipe in recipes %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <!-- Recipe Image Column -->
+                            <div class="col-3" onclick="viewRecipe({{ recipe.id }})">
+                                {% if recipe.image %}
+                                    <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid img-fluids">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid img-fluids">
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Recipe Details Column -->
+                            <div class="col-6" onclick="viewRecipe({{ recipe.id }})">
+                                <h5>{{ recipe.title }}</h5>
+                                <p>{{ recipe.description }}</p>
+                            </div>
+
+                            <!-- Favorite Button Column -->
+                            <div class="col-3">
+                                <div class="mb-2">
+                                    <button class="edit-button" onclick="unfavorite({{ recipe.id }})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                        </svg>
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">Favorite will apear here.</p>
+        {% endif %}
+    </div>
+        
+    <script>
+        function viewRecipe(recipeId) {
+            window.location.href = "/recipe/" + recipeId;
+        }
+
+        function unfavorite(recipeId) {
+            fetch(`/unfavorite/${recipeId}`, {
+                method: 'POST',
+            });
+        }
+    </script>
+    
+{% endblock %}

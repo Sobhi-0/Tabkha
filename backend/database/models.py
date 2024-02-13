@@ -6,12 +6,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
-database_path = os.environ.get('DATABASE_URL')
+db_path = os.environ.get('DATABASE_URL')
 
 db = SQLAlchemy()
 
-def setup_db(app, database_path=database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres@localhost:5432/recipe_sharing"
+def setup_db(app, database_path=db_path):
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     migrate = Migrate(app, db)
@@ -45,7 +45,7 @@ favorites = db.Table(
     "favorites",
     db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
     db.Column("recipe_id", db.Integer, db.ForeignKey("recipes.id"), primary_key=True),
-    db.Column("created_at", db.DateTime, nullable=False)
+    db.Column("created_at", db.DateTime)
 )
 
 
@@ -53,7 +53,7 @@ follows = db.Table(
     "follows",
     db.Column("following_user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
     db.Column("followed_user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("created_at", db.DateTime, nullable=False),
+    db.Column("created_at", db.DateTime),
     info={'foreign_keys': ['follows.following_user_id', 'follows.followed_user_id']}
 )
 
@@ -94,7 +94,21 @@ class Recipe(BaseModel):
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
-    recipes = db.relationship('Instruction', backref='recipe', lazy=True)
+    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant', cascade="all, delete-orphan", lazy='joined', order_by="Ingrediant.item_number")
+    instructions = db.relationship('Instruction', backref='recipe_instruction', cascade="all, delete-orphan", lazy='joined')
+
+
+class Ingrediant(BaseModel):
+    __tablename__ = "ingrediants"
+
+    # id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
+    item_number = db.Column(db.Integer, nullable=False)
+    item = db.Column(db.Text, nullable=False)
+
+    __mapper_args__ = {
+        "confirm_deleted_rows": False
+    }
 
 
 class Instruction(BaseModel):
@@ -104,6 +118,10 @@ class Instruction(BaseModel):
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), primary_key=True, nullable=False)
     step_number = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False)
+
+    __mapper_args__ = {
+        "confirm_deleted_rows": False
+    }
 
 
 class Category(BaseModel):
