@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block main %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <h2 class="text mb-4">Profile</h2>
+
+                <div class="text-muted">ID: {{ user.id }}</div>
+                <div class="text-muted">Joined on {{ user.created_at.strftime('%d-%m-%Y') }}</div> <br>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstname">First Name</label>
+                        <input autocomplete="off" autofocus class="form-control" id="firstname" name="firstname" placeholder="First Name" type="text" value="{{ user.first_name }}" disabled>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastname">Last Name</label>
+                        <input autocomplete="off" class="form-control" id="lastname" name="lastname" placeholder="Last Name" type="text" value="{{ user.last_name }}" disabled>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="username">Username</label>
+                    <input autocomplete="off" class="form-control" id="username" name="username" placeholder="Username" type="text" value="{{ user.username }}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="email">Email</label>
+                    <input autocomplete="off" class="form-control" id="email" name="email" placeholder="Email" type="text" value="{{ user.email }}" disabled>
+                </div>
+                
+                <!-- Button to toggle password change form -->
+                <button id="changePasswordBtn" class="btn btn-primary" type="button">Change Password</button>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-8 offset-lg-3">
+                <br>
+                <!-- Password change form (initially hidden) -->
+                <form id="changePasswordForm" action="/change-password" method="post" class="ml-3" style="display: none;">
+                    <h2 class="text mb-4">Change Password</h2>
+                    <div class="mb-3">
+                        <label for="old_password">Current Password</label>
+                        <input class="form-control" id="old_password" name="old_password" placeholder="Current Password" type="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password">New Password</label>
+                        <input class="form-control" id="new_password" name="new_password" placeholder="New Password" type="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm New Password" type="password">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Include jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Toggle visibility of password change form
+            $('#changePasswordBtn').click(function() {
+                $('#changePasswordForm').toggle();
+            });
+        });
+    </script>
+{% endblock %}

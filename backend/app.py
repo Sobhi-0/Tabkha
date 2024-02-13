@@ -326,6 +326,18 @@ def create_app(db_URI="", test_config=None):
         return render_template("my-favorites.html", recipes=recipes)
 
 
+    @app.route("/profile", methods=["GET"])
+    @login_required
+    def profile():
+        user = User.query.filter_by(id=session["user_id"]).first()
+
+        if not user:
+            flash("User not found", "error")
+            return redirect("/")
+
+        return render_template("profile.html", user=user)
+
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         # Forget any user_id
@@ -366,6 +378,41 @@ def create_app(db_URI="", test_config=None):
             return render_template("login.html")
 
     
+    @app.route("/change-password", methods=["POST"])
+    @login_required
+    def change_password():
+        old_password = request.form.get("old_password")
+        new_password = request.form.get("new_password")
+        confirm_password = request.form.get("confirm_password")
+
+        # Ensure all fields were submitted
+        if not old_password or not new_password or not confirm_password:
+            flash("Must fill all fields", "warning")
+            return redirect("/profile")
+
+        # Ensure old password is correct
+        user = User.query.filter_by(id=session["user_id"]).first()
+        if not check_password_hash(user.password_hash, old_password):
+            flash("Old password is incorrect", "error")
+            return redirect("/profile")
+
+        # Ensure new password meets constraints
+        if not valid_password(new_password):
+            flash("Password does not meet constraints", "error")
+            return redirect("/profile")
+
+        # Ensure new password and confirm password match
+        if new_password != confirm_password:
+            flash("Passwords do not match", "error")
+            return redirect("/profile")
+
+        user.password_hash = generate_password_hash(new_password)
+        user.update()
+
+        flash("Password changed successfully", "success")
+        return redirect("/profile")
+
+
     @app.route("/register", methods=["GET", "POST"])
     def register():
         if request.method == "POST":
