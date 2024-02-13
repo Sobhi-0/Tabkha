@@ -274,6 +274,58 @@ def create_app(db_URI="", test_config=None):
         return render_template("search.html", search_query=search_query, paginated_recipes=paginated_recipes)
 
     
+    # Add recipe to favorites
+    @app.route("/favorite/<int:recipe_id>", methods=["POST"])
+    @login_required
+    def favorite(recipe_id):
+        recipe = Recipe.query.filter_by(id=recipe_id).first()
+
+        if not recipe:
+            flash("Recipe not found", "error")
+            return redirect("/")
+
+        user = User.query.filter_by(id=session["user_id"]).first()
+        user.favorites.append(recipe)
+        user.update()
+
+        flash("Recipe added to favorites!", "success")
+        return redirect("/")
+
+
+    # Remove recipe from favorites
+    @app.route("/unfavorite/<int:recipe_id>", methods=["POST"])
+    @login_required
+    def unfavorite(recipe_id):
+        recipe = Recipe.query.filter_by(id=recipe_id).first()
+
+        if not recipe:
+            flash("Recipe not found", "error")
+            return redirect("/")
+
+        user = User.query.filter_by(id=session["user_id"]).first()
+
+        if recipe not in user.favorites:
+            flash("Recipe not in favorites", "error")
+            return redirect("/")
+
+        user.favorites.remove(recipe)
+        user.update()
+
+        flash("Recipe removed from favorites!", "success")
+        # return render_template("favorites.html",)
+        return redirect("/")
+
+
+    # View user's favorites
+    @app.route("/my-favorites", methods=["GET"])
+    @login_required
+    def my_favorites():
+        user = User.query.filter_by(id=session["user_id"]).first()
+        recipes = user.favorites
+
+        return render_template("my-favorites.html", recipes=recipes)
+
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         # Forget any user_id

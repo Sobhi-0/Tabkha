@@ -45,7 +45,7 @@ favorites = db.Table(
     "favorites",
     db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
     db.Column("recipe_id", db.Integer, db.ForeignKey("recipes.id"), primary_key=True),
-    db.Column("created_at", db.DateTime, nullable=False)
+    db.Column("created_at", db.DateTime)
 )
 
 
@@ -53,7 +53,7 @@ follows = db.Table(
     "follows",
     db.Column("following_user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
     db.Column("followed_user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("created_at", db.DateTime, nullable=False),
+    db.Column("created_at", db.DateTime),
     info={'foreign_keys': ['follows.following_user_id', 'follows.followed_user_id']}
 )
 

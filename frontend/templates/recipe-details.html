@@ -24,12 +24,28 @@
                 </svg>
                 <i class="bi bi-clock-fill">Cook Time:  {{ recipe.cook_time }} minutes</i> <br>
                 
-
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
                     <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"/>
                     <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"/>
                 </svg>
-                <i class="bi bi-tag">Category: {{ recipe.category.category }}</i>
+                <i class="bi bi-tag">Category: {{ recipe.category.category }}</i> <br>
+
+                <!-- Favorite Button -->
+                {% if session["user_id"] %}
+                    {% if is_favorite %}
+                        <form action="{{ url_for('unfavorite', recipe_id=recipe.id) }}" method="POST">
+                            <button type="submit" class="btn btn-outline-danger mt-3">
+                                <i class="bi bi-heart-fill"></i> Remove from Favorites
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('favorite', recipe_id=recipe.id) }}" method="POST">
+                            <button type="submit" class="btn btn-outline-danger mt-3">
+                                <i class="bi bi-heart"></i> Add to Favorites
+                            </button>
+                        </form>
+                        {% endif %}
+                {% endif %}
             </div>
 
             <div class="col">
