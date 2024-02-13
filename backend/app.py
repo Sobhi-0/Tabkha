@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import text
 
 from database.models import (Category, Instruction, Ingrediant, Recipe, User, db, setup_db)
-from flask import (Flask, flash, g, redirect, render_template,
+from flask import (Flask, flash, redirect, render_template,
                    request, session)
 from flask_session import Session
 from helpers import login_required, paginate_items, valid_email, valid_password
