@@ -288,11 +288,12 @@ def create_app(db_URI="", test_config=None):
         search_query = request.args.get("q")
         recipes = Recipe.query.filter(Recipe.title.ilike(
             f"%{search_query}%")).order_by(Recipe.created_at.desc())
+        count = len(recipes.all())
         # Paginating recipes
         paginated_recipes = paginate_items(
             selection=recipes, request=request, per_page=7)
 
-        return render_template("search.html", search_query=search_query, paginated_recipes=paginated_recipes)
+        return render_template("search.html", search_query=search_query, paginated_recipes=paginated_recipes, count=count)
 
     # Add recipe to favorites
 

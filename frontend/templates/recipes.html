@@ -8,14 +8,12 @@
 
     <h1>Recipes</h1>
 
-    <!-- Search Bar -->
-    <form action="/search" method="get" class="d-flex mb-4">
-        <input class="form-control me-2" type="search" name="q" placeholder="Search for recipes" aria-label="Search">
-        <button class="btn btn-outline-primary" type="submit">Search</button>
-    </form>
-
-
     <div class="container">
+        <!-- Search Bar -->
+        <form action="/search" method="get" class="d-flex mb-4">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search for recipes" aria-label="Search">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
         <!-- Displaying Paginated Recipes -->
         <ul class="list-group mb-4">
             {% for recipe in paginated_recipes %}
