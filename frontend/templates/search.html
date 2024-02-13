@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search: {{ search_query }} 
+{% endblock %}
+
+{% block main %}
+
+    <div class="container">
+        <h1 class="title">Search Results</h1>
+        {% if recipes|length > 0 %}
+        <p class="text-muted">Found {{ recipes|length }} recipes for "{{ search_query }}"</p>
+        {% else %}
+        <p class="text-muted">No recipes found for "{{ search_query }}"</p>
+        {% endif %}
+
+        <!-- Displaying Paginated Recipes -->
+        <ul class="list-group mb-4">
+            {% for recipe in paginated_recipes %}
+                <!-- Display each recipe as a list item with image, title, and description -->
+                <li class="list-group-item">
+                        <div class="row">
+                            <!-- Recipe Image Column -->
+                            <div class="col-3" onclick="viewRecipe({{ recipe.id }})">
+                                {% if recipe.image %}
+                                    <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid img-fluids">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid img-fluids">
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Recipe Details Column -->
+                            <div class="col-6" onclick="viewRecipe({{ recipe.id }})">
+                                <h5>{{ recipe.title }}</h5>
+                                <p>{{ recipe.description }}</p>
+                            </div>
+                        </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Recipe Pagination">
+            <ul class="pagination justify-content-center ">
+                {% if paginated_recipes.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=paginated_recipes.prev_num) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in paginated_recipes.iter_pages() %}
+                    {% if num %}
+                        <li class="page-item {% if num == paginated_recipes.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=num) }}">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if paginated_recipes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=paginated_recipes.next_num) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+
+    <script>
+        function viewRecipe(recipeId) {
+            window.location.href = "/recipe/" + recipeId;
+        }
+    </script>
+ 
+{% endblock %}

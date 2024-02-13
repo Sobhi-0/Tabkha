@@ -69,6 +69,13 @@ def create_app(db_URI="", test_config=None):
             flash("Recipe not found", "error")
             return render_template("home.html")
 
+        # Check if the user added the recipe to favorites
+        is_favorite = False
+        if session.get("user_id"):
+            user = User.query.filter_by(id=session["user_id"]).first()
+            if recipe in user.favorites:
+                is_favorite = True
+
         # Get the username of the recipe owner
         user = User.query.filter_by(id=recipe.user_id).first()
 
@@ -85,7 +92,7 @@ def create_app(db_URI="", test_config=None):
         instructions_rows = instructions_res.fetchall()
         instructions = [instruction for instruction in instructions_rows]
 
-        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions, user=user)
+        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions, user=user, is_favorite=is_favorite)
 
 
     @app.route("/add-recipe", methods=["GET", "POST"])
@@ -256,6 +263,17 @@ def create_app(db_URI="", test_config=None):
         return render_template("my-recipes.html", paginated_recipes=paginated_recipes)
 
 
+    # Search for recipes
+    @app.route("/search", methods=["GET"])
+    def search():
+        search_query = request.args.get("q")
+        recipes = Recipe.query.filter(Recipe.title.ilike(f"%{search_query}%")).order_by(Recipe.created_at.desc())
+        # Paginating recipes
+        paginated_recipes = paginate_items(selection=recipes, request=request, per_page=7)
+
+        return render_template("search.html", search_query=search_query, paginated_recipes=paginated_recipes)
+
+    
     @app.route("/login", methods=["GET", "POST"])
     def login():
         # Forget any user_id
