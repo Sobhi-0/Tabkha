@@ -7,14 +7,8 @@
 {% block main %}
 
     <h1>Welcome to the Recipe Sharing App</h1>
-
-
-    <!-- Search Bar -->
-    <form action="/search" method="get" class="d-flex mb-4">
-        <input class="form-control me-2" type="search" name="q" placeholder="Search for recipes" aria-label="Search">
-        <button class="btn btn-outline-primary" type="submit">Search</button>
-    </form>
-
+    <p>Share your favorite recipes with the world!</p>
+    
     <!-- Popular Recipes Section -->
     <section>
         <h2>Popular Recipes</h2>
@@ -46,7 +40,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Show More</h5>
                         <p class="card-text d-md-block">View all popular recipes</p>
-                        <a href="/popular-recipes" class="btn btn-primary">Show More</a>
+                        <a href="/recipes" class="btn btn-primary">Show More</a>
                     </div>
                 </div>
             </div>
@@ -85,7 +79,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Show More</h5>
                         <p class="card-text d-md-block">View all recommended recipes</p>
-                        <a href="/recommended-recipes" class="btn btn-primary">Show More</a>
+                        <a href="/recipes" class="btn btn-primary">Show More</a>
                     </div>
                 </div>
             </div>
