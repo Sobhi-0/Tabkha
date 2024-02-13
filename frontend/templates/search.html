@@ -54,7 +54,7 @@
         <ul class="pagination justify-content-center ">
             {% if paginated_recipes.has_prev %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=paginated_recipes.prev_num) }}" aria-label="Previous">
+                    <a class="page-link" href="{{ url_for('search', q=search_query, page=paginated_recipes.prev_num) }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -63,7 +63,7 @@
             {% for num in paginated_recipes.iter_pages() %}
                 {% if num %}
                     <li class="page-item {% if num == paginated_recipes.page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=num) }}">{{ num }}</a>
+                        <a class="page-link" href="{{ url_for('search', q=search_query, page=num) }}">{{ num }}</a>
                     </li>
                 {% else %}
                     <li class="page-item disabled"><span class="page-link">...</span></li>
@@ -72,7 +72,7 @@
 
             {% if paginated_recipes.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('my_recipes', user_id=session['user_id'], page=paginated_recipes.next_num) }}" aria-label="Next">
+                    <a class="page-link" href="{{ url_for('search', q=search_query, page=paginated_recipes.next_num) }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
