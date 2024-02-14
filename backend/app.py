@@ -104,7 +104,14 @@ def create_app(db_URI="", test_config=None):
         instructions_rows = instructions_res.fetchall()
         instructions = [instruction for instruction in instructions_rows]
 
-        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions, user=user, is_favorite=is_favorite)
+        # Get the number of favorites for the recipe
+        favorites_query = text(
+            "SELECT COUNT(*) FROM favorites WHERE recipe_id = :recipe_id")
+        parameters = {"recipe_id": recipe_id}
+        favorites_res = db.session.execute(favorites_query, parameters)
+        favorites_count = favorites_res.fetchone()[0]
+
+        return render_template('recipe-details.html', recipe=recipe, ingredients=ingrediants, instructions=instructions, user=user, is_favorite=is_favorite, favorites_count=favorites_count)
 
     @app.route("/add-recipe", methods=["GET", "POST"])
     @login_required
@@ -494,7 +501,22 @@ def create_app(db_URI="", test_config=None):
         # Recipes to be displayed on the home page
         recipes = Recipe.query.order_by(Recipe.id.desc()).limit(5).all()
 
-        return render_template("home.html", recipes=recipes)
+        # Get the most popular recipes
+        popular_recipes_query = text(
+            """
+            SELECT recipes.*, COUNT(favorites.recipe_id) AS num_favorites
+            FROM recipes
+            LEFT JOIN favorites ON recipes.id = favorites.recipe_id
+            GROUP BY recipes.id
+            ORDER BY num_favorites DESC
+            LIMIT 5
+            """
+        )
+        popular_recipes_res = db.session.execute(popular_recipes_query)
+        popular_recipes_rows = popular_recipes_res.fetchall()
+        popular_recipes = [recipe for recipe in popular_recipes_rows]
+
+        return render_template("home.html", recipes=recipes, popular_recipes=popular_recipes)
 
     return app
 
