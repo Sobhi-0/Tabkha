@@ -39,20 +39,20 @@
             <div class="col-md-4 col-sm-6 mb-4">
                 <div class="card text-dark">
                     <div class="card-body">
-                        <h5 class="card-title">Show More</h5>
-                        <p class="card-text d-md-block">View all popular recipes</p>
-                        <a href="/recipes" class="btn btn-primary">Show More</a>
+                        <h5 class="card-title">Explore More</h5>
+                        <p class="card-text d-md-block">View all recipes</p>
+                        <a href="/recipes" class="btn btn-primary">Go to Recipes</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Recommended Recipes Section -->
+    <!-- Recent Recipes Section -->
     <section>
         <h2>Recent Recipes</h2>
         <div class="row">
-            <!-- Recommended recipe cards -->
+            <!-- Recent recipe cards -->
             {% for recipe in recipes %}
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark" onclick="viewRecipe({{ recipe.id }})">
@@ -72,15 +72,14 @@
                     </div>
                 </div>
             {% endfor %}
-            <!-- Repeat similar cards for other recommended recipes -->
 
-            <!-- Show More card for Recommended Recipes -->
+            <!-- Show More card for Recent Recipes -->
             <div class="col-md-4 col-sm-6 mb-4">
                 <div class="card text-dark">
                     <div class="card-body">
-                        <h5 class="card-title">Show More</h5>
-                        <p class="card-text d-md-block">View all recommended recipes</p>
-                        <a href="/recipes" class="btn btn-primary">Show More</a>
+                        <h5 class="card-title">Explore More</h5>
+                        <p class="card-text d-md-block">View all recipes</p>
+                        <a href="/recipes" class="btn btn-primary">Go to Recipes</a>
                     </div>
                 </div>
             </div>
