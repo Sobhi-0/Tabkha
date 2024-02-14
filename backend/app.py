@@ -1,13 +1,14 @@
 import datetime
+import os
 
 from sqlalchemy import text
 
 from database.models import (
     Category, Instruction, Ingrediant, Recipe, User, db, setup_db)
 from flask import (Flask, flash, redirect, render_template,
-                   request, session)
+                   request, session, send_from_directory)
 from flask_session import Session
-from helpers import login_required, paginate_items, valid_email, valid_password
+from helpers import login_required, paginate_items, valid_email, valid_password, generate_unique_filename, allowed_file
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -19,6 +20,8 @@ def create_app(db_URI="", test_config=None):
 
     # Enable template auto-reloading
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+    app.config['UPLOAD_FOLDER'] = '../backend/uploads'
 
     if db_URI:
         setup_db(app, db_URI)
@@ -40,6 +43,10 @@ def create_app(db_URI="", test_config=None):
         response.headers["Expires"] = 0
         response.headers["Pragma"] = "no-cache"
         return response
+
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
     @app.route("/health")
     def health():
@@ -146,8 +153,16 @@ def create_app(db_URI="", test_config=None):
                 flash("Category does not exist", "warning")
                 return render_template("add-recipe.html", categories=categories, title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, category_id=category_id, instructions=instructions, ingrediants=ingrediants)
 
+            # Handle image upload
+            file = request.files['image']
+            image_filename = None
+            if file and allowed_file(file.filename):
+                filename = generate_unique_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_filename = filename
+
             # Create a new recipe
-            recipe = Recipe(title=title, description=description, prepare_time=prepare_time, cook_time=cook_time,
+            recipe = Recipe(title=title, description=description, prepare_time=prepare_time, cook_time=cook_time, image=image_filename,
                             category_id=category_id, user_id=session["user_id"], created_at=datetime.datetime.now())
 
             # Add ingrediants to the recipe

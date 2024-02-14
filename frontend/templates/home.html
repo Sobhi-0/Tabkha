@@ -19,7 +19,11 @@
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark" onclick="viewRecipe({{ recipe.id }})">
                         <!-- Recipe image -->
-                        <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
+                        {% if recipe.image %}
+                            <img src="{{ url_for('uploaded_file', filename=recipe.image) }}" class="card-img card-image" alt="Recipe Image">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
+                        {% endif %}
                         <div class="card-img-overlay">
                             <h5 class="card-title">{{ recipe.title }}</h5>
                             <p class="card-text d-md-block">{{ recipe.description }}</p>
@@ -57,7 +61,11 @@
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card text-bg-dark" onclick="viewRecipe({{ recipe.id }})">
                         <!-- Recipe image -->
-                        <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
+                        {% if recipe.image %}
+                            <img src="{{ url_for('uploaded_file', filename=recipe.image) }}" class="card-img card-image" alt="Recipe Image">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='recipe-image.jpg') }}" class="card-img card-image" alt="Recipe Image">
+                        {% endif %}
                         <div class="card-img-overlay">
                             <h5 class="card-title">{{ recipe.title }}</h5>
                             <p class="card-text d-md-block">{{ recipe.description }}</p>

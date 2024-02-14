@@ -22,11 +22,11 @@
                         <!-- Recipe Image Column -->
                         <div class="col-3" onclick="viewRecipe({{ recipe.id }})">
                             {% if recipe.image %}
-                                <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid img-fluids">
+                            <img src="{{ url_for('uploaded_file', filename=recipe.image) }}" alt="Recipe Image" class="img-fluid img-fluids">
                             {% else %}
                                 <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid img-fluids">
                             {% endif %}
-                        </div>
+                </div>
                         
                         <!-- Recipe Details Column -->
                         <div class="col-6" onclick="viewRecipe({{ recipe.id }})">

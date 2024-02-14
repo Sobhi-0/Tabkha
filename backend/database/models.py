@@ -95,7 +95,7 @@ class Recipe(BaseModel):
     description = db.Column(db.String, nullable=False)
     prepare_time = db.Column(db.Integer, nullable=False)
     cook_time = db.Column(db.Integer, nullable=False)
-    image = db.Column(db.LargeBinary)
+    image = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey(
         'categories.id'), nullable=False)

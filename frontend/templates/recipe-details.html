@@ -55,9 +55,9 @@
 
             <div class="col">
                 {% if recipe.image %}
-                    <img src="{{ recipe.image }}" alt="Recipe Image" class="img-fluid rounded float-end">
+                <img src="{{ url_for('uploaded_file', filename=recipe.image) }}" alt="Recipe Image" class="details-img img-fluid rounded float-end">
                 {% else %}
-                    <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="img-fluid rounded float-end">
+                    <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" alt="Recipe Image" class="details-img img-fluid rounded float-end">
                 {% endif %}
             </div>
         </div>

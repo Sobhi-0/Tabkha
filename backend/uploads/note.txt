@@ -1,0 +1,2 @@
+uploads directory is the default location for the file uploads.
+specified in app.py -->     app.config['UPLOAD_FOLDER'] = '../backend/uploads'

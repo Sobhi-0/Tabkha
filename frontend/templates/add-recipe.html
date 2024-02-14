@@ -8,7 +8,7 @@
     <h1>Create a new recipe</h1>
 
     <!-- create a form to get all the required data for a recipe (title description prepare_time cook_time category_id) to create a recipe-->
-    <form action="/add-recipe" method="post" class="ms-5 me-5">
+    <form action="/add-recipe" method="POST" enctype="multipart/form-data" class="ms-5 me-5">
         <!-- add the requried input with labels-->
         <div class="form-group">
             <label for="title" class="col-form-label">Title</label>
@@ -17,6 +17,10 @@
         <div class="form-group">
             <label for="description" class="col-form-label">Description</label>
             <textarea name="description" required class="form-control" id="description" placeholder="Enter description" rows="4">{{ description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="image" class="col-form-label">Image (Optional)</label>
+            <input type="file" name="image" class="form-control" id="image">
         </div>
         <div class="form-group">
             <label for="prepare_time" class="col-form-label">Prepare Time</label>
