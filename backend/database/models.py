@@ -102,14 +102,14 @@ class Recipe(BaseModel):
     created_at = db.Column(db.DateTime, nullable=False)
 
     # one-to-many relations
-    ingrediants = db.relationship('Ingrediant', backref='recipe_ingrediant',
-                                  cascade="all, delete-orphan", lazy='joined', order_by="Ingrediant.item_number")
+    ingredients = db.relationship('Ingredient', backref='recipe_ingredient',
+                                  cascade="all, delete-orphan", lazy='joined', order_by="Ingredient.item_number")
     instructions = db.relationship(
         'Instruction', backref='recipe_instruction', cascade="all, delete-orphan", lazy='joined')
 
 
-class Ingrediant(BaseModel):
-    __tablename__ = "ingrediants"
+class Ingredient(BaseModel):
+    __tablename__ = "ingredients"
 
     # id = db.Column(db.Integer, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey(

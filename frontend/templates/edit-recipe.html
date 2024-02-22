@@ -34,24 +34,24 @@
             </select>
         </div>
 
-        <!-- Ingrediants fields -->
+        <!-- Ingredients fields -->
         <div class="form-group">
-            <label class="col-form-label">Ingrediants</label>
-            <div id="ingrediantsContainer">
-                {% for ingrediant in ingrediants %}
-                    <div class="ingrediant-item mb-2">
+            <label class="col-form-label">Ingredients</label>
+            <div id="ingredientsContainer">
+                {% for ingredient in ingredients %}
+                    <div class="ingredient-item mb-2">
                         <div class="input-group">
                             <span class="input-group-text">{{ loop.index }}</span>
-                            <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant.item }}">
-                            <!-- <textarea name="ingrediants[]" required class="form-control" placeholder="Enter ingrediant">{{ ingrediant }}</textarea> -->
+                            <input name="ingredients[]" type="text" required class="form-control" placeholder="Enter ingredient" value="{{ ingredient.item }}">
+                            <!-- <textarea name="ingredients[]" required class="form-control" placeholder="Enter ingredient">{{ ingredient }}</textarea> -->
                             {% if loop.index != 1 %}
-                                <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                                <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">Remove</button>
                             {% endif %}
                         </div>
                     </div>
                 {% endfor %}
             </div>
-            <button type="button" class="btn btn-success" onclick="addIngrediant()">Add Ingrediant</button>
+            <button type="button" class="btn btn-success" onclick="addIngredient()">Add Ingredient</button>
         </div>
 
         <!-- Instruction fields -->
@@ -111,32 +111,32 @@
             }
         }
         
-        function addIngrediant() {
-            var container = document.getElementById('ingrediantsContainer');
-            var itemCount = container.getElementsByClassName('ingrediant-item').length + 1;
+        function addIngredient() {
+            var container = document.getElementById('ingredientsContainer');
+            var itemCount = container.getElementsByClassName('ingredient-item').length + 1;
             console.log(itemCount);
             
-            var ingrediantItem = document.createElement('div');
-            ingrediantItem.className = 'ingrediant-item mb-2';
+            var ingredientItem = document.createElement('div');
+            ingredientItem.className = 'ingredient-item mb-2';
     
-            ingrediantItem.innerHTML = `
+            ingredientItem.innerHTML = `
                 <div class="input-group">
                     <span class="input-group-text">${itemCount}</span>
-                    <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant">
-                    <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                    <input name="ingredients[]" type="text" required class="form-control" placeholder="Enter ingredient">
+                    <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">Remove</button>
                 </div>
             `;
     
-            container.appendChild(ingrediantItem);
+            container.appendChild(ingredientItem);
         }
     
-        function removeIngrediant(button) {
-            var ingrediantItem = button.closest('.ingrediant-item');
-            ingrediantItem.remove();
+        function removeIngredient(button) {
+            var ingredientItem = button.closest('.ingredient-item');
+            ingredientItem.remove();
     
-            // Update ingrediant numbers
-            var container = document.getElementById('ingrediantsContainer');
-            var items = container.getElementsByClassName('ingrediant-item');
+            // Update ingredient numbers
+            var container = document.getElementById('ingredientsContainer');
+            var items = container.getElementsByClassName('ingredient-item');
             for (var i = 0; i < items.length; i++) {
                 items[i].querySelector('.input-group-text').textContent = i + 1;
             }

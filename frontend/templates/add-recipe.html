@@ -41,32 +41,32 @@
             </select>
         </div>
 
-         <!-- Ingrediants fields -->
+         <!-- Ingredients fields -->
          <div class="form-group">
-            <label class="col-form-label">Ingrediants</label>
-            <div id="ingrediantsContainer">
-                {% if ingrediants %}
-                    {% for ingrediant in ingrediants %}
-                        <div class="ingrediant-item mb-2">
+            <label class="col-form-label">Ingredients</label>
+            <div id="ingredientsContainer">
+                {% if ingredients %}
+                    {% for ingredient in ingredients %}
+                        <div class="ingredient-item mb-2">
                             <div class="input-group">
                                 <span class="input-group-text">{{ loop.index }}</span>
-                                <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant }}">
+                                <input name="ingredients[]" type="text" required class="form-control" placeholder="Enter ingredient" value="{{ ingredient }}">
                                 {% if loop.index > 1 %}
-                                <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                                <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">Remove</button>
                                 {% endif %}
                             </div>
                         </div>
                     {% endfor %}
                 {% else %}
-                    <div class="ingrediant-item mb-2">
+                    <div class="ingredient-item mb-2">
                         <div class="input-group">
                             <span class="input-group-text">1</span>
-                            <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant" value="{{ ingrediant }}">
+                            <input name="ingredients[]" type="text" required class="form-control" placeholder="Enter ingredient" value="{{ ingredient }}">
                         </div>
                     </div>
                 {% endif %}
             </div>
-            <button type="button" class="btn btn-success" onclick="addIngrediant()">Add Ingrediant</button>
+            <button type="button" class="btn btn-success" onclick="addIngredient()">Add Ingredient</button>
         </div>
 
          <!-- Instruction fields -->
@@ -132,31 +132,31 @@
             }
         }
 
-        function addIngrediant() {
-            var container = document.getElementById('ingrediantsContainer');
-            var itemCount = container.getElementsByClassName('ingrediant-item').length + 1;
+        function addIngredient() {
+            var container = document.getElementById('ingredientsContainer');
+            var itemCount = container.getElementsByClassName('ingredient-item').length + 1;
     
-            var ingrediantItem = document.createElement('div');
-            ingrediantItem.className = 'ingrediant-item mb-2';
+            var ingredientItem = document.createElement('div');
+            ingredientItem.className = 'ingredient-item mb-2';
     
-            ingrediantItem.innerHTML = `
+            ingredientItem.innerHTML = `
                 <div class="input-group">
                     <span class="input-group-text">${itemCount}</span>
-                    <input name="ingrediants[]" type="text" required class="form-control" placeholder="Enter ingrediant">
-                    <button type="button" class="btn btn-danger" onclick="removeIngrediant(this)">Remove</button>
+                    <input name="ingredients[]" type="text" required class="form-control" placeholder="Enter ingredient">
+                    <button type="button" class="btn btn-danger" onclick="removeIngredient(this)">Remove</button>
                 </div>
             `;
     
-            container.appendChild(ingrediantItem);
+            container.appendChild(ingredientItem);
         }
     
-        function removeIngrediant(button) {
-            var ingrediantItem = button.closest('.ingrediant-item');
-            ingrediantItem.remove();
+        function removeIngredient(button) {
+            var ingredientItem = button.closest('.ingredient-item');
+            ingredientItem.remove();
     
-            // Update ingrediant numbers
-            var container = document.getElementById('ingrediantsContainer');
-            var items = container.getElementsByClassName('ingrediant-item');
+            // Update ingredient numbers
+            var container = document.getElementById('ingredientsContainer');
+            var items = container.getElementsByClassName('ingredient-item');
             for (var i = 0; i < items.length; i++) {
                 items[i].querySelector('.input-group-text').textContent = i + 1;
             }
