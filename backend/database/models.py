@@ -52,16 +52,17 @@ favorites = db.Table(
 )
 
 
-follows = db.Table(
-    "follows",
-    db.Column("following_user_id", db.Integer,
-              db.ForeignKey("users.id"), primary_key=True),
-    db.Column("followed_user_id", db.Integer,
-              db.ForeignKey("users.id"), primary_key=True),
-    db.Column("created_at", db.DateTime),
-    info={'foreign_keys': [
-        'follows.following_user_id', 'follows.followed_user_id']}
-)
+# For future TODO: Add following and followers
+# follows = db.Table(
+#     "follows",
+#     db.Column("following_user_id", db.Integer,
+#               db.ForeignKey("users.id"), primary_key=True),
+#     db.Column("followed_user_id", db.Integer,
+#               db.ForeignKey("users.id"), primary_key=True),
+#     db.Column("created_at", db.DateTime),
+#     info={'foreign_keys': [
+#         'follows.following_user_id', 'follows.followed_user_id']}
+# )
 
 
 class User(BaseModel):
@@ -82,9 +83,9 @@ class User(BaseModel):
     # many-to-many relations
     favorites = db.relationship('Recipe', secondary=favorites,
                                 lazy='subquery', backref=db.backref('favorite', lazy=True))
-    # follows = db.relationship('User', secondary=follows, lazy='subquery', backref=db.backref('follows', lazy=True))
-    follows = db.relationship('User', secondary=follows, primaryjoin=(follows.c.following_user_id == id), secondaryjoin=(
-        follows.c.followed_user_id == id), backref=db.backref('followers', lazy=True))
+    # # follows = db.relationship('User', secondary=follows, lazy='subquery', backref=db.backref('follows', lazy=True))
+    # follows = db.relationship('User', secondary=follows, primaryjoin=(follows.c.following_user_id == id), secondaryjoin=(
+    #     follows.c.followed_user_id == id), backref=db.backref('followers', lazy=True))
 
 
 class Recipe(BaseModel):
