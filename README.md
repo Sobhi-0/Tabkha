@@ -55,9 +55,9 @@ If you get an error ```ModuleNotFoundError``` then, instead of running ```flask 
 |   ├── static
 |   │   └── styles.css
 |   └── templates
-│       ├── extended.html # Used to as an initial template to create other templates
+│       ├── extended.html # Used as an initial template to create other templates
 │       ├── layout.html # Contains all the html file except the body that will be extended by other templates
-│       └── ... # More are more templates
+│       └── ... # There are more templates
 └── README.md
 ```
 
